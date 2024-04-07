@@ -1,75 +1,36 @@
+using Amazon.Lambda.Core;
+using Amazon.Lambda.APIGatewayEvents;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.DocumentModel;
+using System.Net;
 
-class Program
+[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
+
+namespace YourNamespace
 {
-    static async Task Main(string[] args)
+    public class Functions
     {
-        var client = new AmazonDynamoDBClient();
+        private readonly IRepository _repository;
 
-        var tableName = "YourTableName";
-        var table = Table.LoadTable(client, tableName);
-
-        // Create operation
-        await CreateItemAsync(table, "1", "John", 30);
-
-        // Read operation
-        await ReadItemAsync(table, "1");
-
-        // Update operation
-        await UpdateItemAsync(table, "1", "Jane");
-
-        // Read updated item
-        await ReadItemAsync(table, "1");
-
-        // Delete operation
-        await DeleteItemAsync(table, "1");
-    }
-
-    static async Task CreateItemAsync(Table table, string id, string name, int age)
-    {
-        var document = new Document();
-        document["Id"] = id;
-        document["Name"] = name;
-        document["Age"] = age;
-
-        await table.PutItemAsync(document);
-        Console.WriteLine($"Item with Id {id} created successfully.");
-    }
-
-    static async Task ReadItemAsync(Table table, string id)
-    {
-        var document = await table.GetItemAsync(id);
-        if (document != null)
+        public Functions()
         {
-            Console.WriteLine($"Item found - Id: {document["Id"]}, Name: {document["Name"]}, Age: {document["Age"]}");
+            _repository = new Repository(); // Your repository implementation
         }
-        else
-        {
-            Console.WriteLine($"Item with Id {id} not found.");
-        }
-    }
 
-    static async Task UpdateItemAsync(Table table, string id, string newName)
-    {
-        var updateExpression = new UpdateItemOperationConfig
+        public APIGatewayProxyResponse Get(APIGatewayProxyRequest request, ILambdaContext context)
         {
-            AttributeUpdates = new AttributeUpdates
+            var id = request.PathParameters["id"];
+            var item = _repository.Get(id);
+            var response = new APIGatewayProxyResponse
             {
-                ["Name"] = new AttributeValueUpdate { Action = AttributeAction.PUT, Value = new AttributeValue { S = newName } }
-            }
-        };
+                StatusCode = (int)(item == null ? HttpStatusCode.NotFound : HttpStatusCode.OK),
+                Body = JsonConvert.SerializeObject(item),
+                Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
+            };
+            return response;
+        }
 
-        await table.UpdateItemAsync(id, updateExpression);
-        Console.WriteLine($"Item with Id {id} updated successfully.");
-    }
-
-    static async Task DeleteItemAsync(Table table, string id)
-    {
-        await table.DeleteItemAsync(id);
-        Console.WriteLine($"Item with Id {id} deleted successfully.");
+        // Implement other CRUD operations (Create, Update, Delete) similarly
     }
 }
