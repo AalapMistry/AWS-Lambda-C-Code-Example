@@ -29,7 +29,7 @@ public class ItemController : Controller
         return View(item);
     }
 
-    [HttpPost]
+    [HttpPut]
     public ActionResult Edit(Item item)
     {
         var existingItem = items.FirstOrDefault(i => i.Id == item.Id);
@@ -37,7 +37,7 @@ public class ItemController : Controller
         existingItem.Description = item.Description;
         return RedirectToAction("Index");
     }
-
+     [HttpPost]
     public ActionResult Delete(int id)
     {
         var item = items.FirstOrDefault(i => i.Id == id);
