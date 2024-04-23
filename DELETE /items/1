@@ -1,40 +1,39 @@
-# CRUD Operations Lambda Function
+# ASP.NET MVC CRUD Operations on AWS Lambda
 
-This is a sample AWS Lambda function written in .NET Core for performing CRUD (Create, Read, Update, Delete) operations on a hypothetical "Item" entity.
+This project demonstrates how to create a simple CRUD (Create, Read, Update, Delete) operations using ASP.NET MVC on AWS Lambda.
 
-## Function Overview
+## Overview
 
-- `GetAllItems`: Retrieves all items.
-- `GetItemById`: Retrieves an item by ID.
-- `CreateItem`: Creates a new item.
-- `UpdateItem`: Updates an existing item.
-- `DeleteItem`: Deletes an item.
+The project uses ASP.NET MVC to create a basic CRUD application for managing items. Each item has an id, name, and description.
+
+## Functionality
+
+- `Index`: Displays a list of all items.
+- `Create`: Allows you to create a new item.
+- `Edit`: Allows you to edit an existing item.
+- `Delete`: Allows you to delete an existing item.
 
 ## Setup
 
 1. **Prerequisites**:
-   - .NET Core SDK
-   - AWS CLI (optional, for deployment)
+   - Visual Studio with ASP.NET MVC support.
+   - AWS Toolkit for Visual Studio.
+   - AWS Lambda and API Gateway configured.
 
-2. **Build**:
-   - Run `dotnet build` to build the project.
+2. **Build and Run Locally**:
+   - Open the solution in Visual Studio.
+   - Build and run the application locally to test the CRUD operations.
 
-3. **Run Locally**:
-   - Use a tool like AWS SAM CLI to test the function locally.
+3. **Deploy to AWS Lambda**:
+   - Use the AWS Toolkit for Visual Studio to deploy the application to AWS Lambda.
+   - Configure the API Gateway to trigger the Lambda function.
 
-4. **Deploy**:
-   - Deploy the function using AWS Management Console, AWS CLI, or AWS Toolkit for Visual Studio.
+4. **Testing**:
+   - Use the API Gateway URL to access the application and test the CRUD operations.
 
-5. **Configure API Gateway**:
-   - Create or update an API Gateway to trigger the Lambda function for HTTP requests.
+## Notes
 
-## Usage
-
-- Use the API Gateway endpoint URLs to perform CRUD operations on the "Item" entity.
-
-## Examples
-
-- See `LambdaHandler.cs` for example code implementing the CRUD operations.
+- This project demonstrates a basic CRUD application using ASP.NET MVC on AWS Lambda. For more complex applications, consider using other AWS services like Elastic Beanstalk or Fargate.
 
 ## License
 
