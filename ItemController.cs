@@ -16,21 +16,21 @@ public class ItemController : Controller
     }
 
     [HttpPost]
-    public ActionResult Create(Item item)
+    public ActionResult CreateItem(Item item)
     {
         item.Id = idCounter++;
         items.Add(item);
         return RedirectToAction("Index");
     }
 
-    public ActionResult Edit(int id)
+    public ActionResult EditItemById(int id)
     {
         var item = items.FirstOrDefault(i => i.Id == id);
         return View(item);
     }
 
     [HttpPut]
-    public ActionResult Edit(Item item)
+    public ActionResult EditItem(Item item)
     {
         var existingItem = items.FirstOrDefault(i => i.Id == item.Id);
         existingItem.Name = item.Name;
@@ -38,7 +38,7 @@ public class ItemController : Controller
         return RedirectToAction("Index");
     }
      [HttpPost]
-    public ActionResult Delete(int id)
+    public ActionResult DeleteItemById(int id)
     {
         var item = items.FirstOrDefault(i => i.Id == id);
         items.Remove(item);
