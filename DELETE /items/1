@@ -1,25 +1,41 @@
-{
-    "name": "New Item"
-}
-{
-    "id": "1",
-    "name": "Updated Item"
-}
+# CRUD Operations Lambda Function
 
-**3. Deploy to AWS Lambda:**
+This is a sample AWS Lambda function written in .NET Core for performing CRUD (Create, Read, Update, Delete) operations on a hypothetical "Item" entity.
 
-- Package your Lambda function and dependencies into a ZIP file.
-- Upload the ZIP file to AWS Lambda.
-- Configure the Lambda function's handler to point to your entry point (e.g., `YourNamespace::YourNamespace.Functions::Get` for the `Get` method).
+## Function Overview
 
-**4. Create an API Gateway:**
+- `GetAllItems`: Retrieves all items.
+- `GetItemById`: Retrieves an item by ID.
+- `CreateItem`: Creates a new item.
+- `UpdateItem`: Updates an existing item.
+- `DeleteItem`: Deletes an item.
 
-- Create a new API in API Gateway.
-- Add resource paths (`/items/{id}`) and methods (GET, POST, PUT, DELETE).
-- Configure the methods to integrate with your Lambda function.
+## Setup
 
-**5. Test the API:**
+1. **Prerequisites**:
+   - .NET Core SDK
+   - AWS CLI (optional, for deployment)
 
-- Use tools like Postman or curl to test the endpoints (`GET /items/1`, `POST /items`, `PUT /items/1`, `DELETE /items/1`).
+2. **Build**:
+   - Run `dotnet build` to build the project.
 
-This is a basic example. Depending on your requirements, you may need to add more error handling, authentication, and validation.
+3. **Run Locally**:
+   - Use a tool like AWS SAM CLI to test the function locally.
+
+4. **Deploy**:
+   - Deploy the function using AWS Management Console, AWS CLI, or AWS Toolkit for Visual Studio.
+
+5. **Configure API Gateway**:
+   - Create or update an API Gateway to trigger the Lambda function for HTTP requests.
+
+## Usage
+
+- Use the API Gateway endpoint URLs to perform CRUD operations on the "Item" entity.
+
+## Examples
+
+- See `LambdaHandler.cs` for example code implementing the CRUD operations.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
