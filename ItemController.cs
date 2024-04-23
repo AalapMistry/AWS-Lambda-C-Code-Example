@@ -23,6 +23,7 @@ public class ItemController : Controller
         return RedirectToAction("Index");
     }
 
+[HttpPut]
     public ActionResult EditItemById(int id)
     {
         var item = items.FirstOrDefault(i => i.Id == id);
