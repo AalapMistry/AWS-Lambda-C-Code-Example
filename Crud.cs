@@ -1,98 +1,52 @@
-using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.DocumentModel;
-using Amazon.Lambda.Core;
-using Amazon.Lambda.APIGatewayEvents;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
-
-public class LambdaHandler
+public class Item
 {
-    private const string TableName = "ItemsTable";
-    private readonly IAmazonDynamoDB _dynamoDbClient;
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+}
 
-    public LambdaHandler()
+public class ItemController : Controller
+{
+    private static List<Item> items = new List<Item>();
+    private static int idCounter = 1;
+
+    public ActionResult Index()
     {
-        _dynamoDbClient = new AmazonDynamoDBClient();
+        return View(items);
     }
 
-    public async Task<APIGatewayProxyResponse> GetAllItems(APIGatewayProxyRequest request, ILambdaContext context)
+    public ActionResult Create()
     {
-        Table itemsTable = Table.LoadTable(_dynamoDbClient, TableName);
-
-        ScanFilter scanFilter = new ScanFilter();
-        Search search = itemsTable.Scan(scanFilter);
-        List<Document> items = await search.GetNextSetAsync();
-
-        return new APIGatewayProxyResponse
-        {
-            StatusCode = 200,
-            Body = Newtonsoft.Json.JsonConvert.SerializeObject(items),
-            Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
-        };
+        return View();
     }
 
-    public async Task<APIGatewayProxyResponse> GetItemById(APIGatewayProxyRequest request, ILambdaContext context)
+    [HttpPost]
+    public ActionResult Create(Item item)
     {
-        string itemId = request.PathParameters["id"];
-        Table itemsTable = Table.LoadTable(_dynamoDbClient, TableName);
-
-        Document item = await itemsTable.GetItemAsync(itemId);
-
-        return new APIGatewayProxyResponse
-        {
-            StatusCode = 200,
-            Body = Newtonsoft.Json.JsonConvert.SerializeObject(item),
-            Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
-        };
+        item.Id = idCounter++;
+        items.Add(item);
+        return RedirectToAction("Index");
     }
 
-    public async Task<APIGatewayProxyResponse> CreateItem(APIGatewayProxyRequest request, ILambdaContext context)
+    public ActionResult Edit(int id)
     {
-        string requestBody = request.Body;
-        Document newItem = Document.FromJson(requestBody);
-
-        Table itemsTable = Table.LoadTable(_dynamoDbClient, TableName);
-        await itemsTable.PutItemAsync(newItem);
-
-        return new APIGatewayProxyResponse
-        {
-            StatusCode = 201,
-            Body = "Item created successfully",
-            Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
-        };
+        var item = items.FirstOrDefault(i => i.Id == id);
+        return View(item);
     }
 
-    public async Task<APIGatewayProxyResponse> UpdateItem(APIGatewayProxyRequest request, ILambdaContext context)
+    [HttpPost]
+    public ActionResult Edit(Item item)
     {
-        string itemId = request.PathParameters["id"];
-        string requestBody = request.Body;
-        Document updatedItem = Document.FromJson(requestBody);
-
-        Table itemsTable = Table.LoadTable(_dynamoDbClient, TableName);
-        await itemsTable.UpdateItemAsync(updatedItem, itemId);
-
-        return new APIGatewayProxyResponse
-        {
-            StatusCode = 200,
-            Body = "Item updated successfully",
-            Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
-        };
+        var existingItem = items.FirstOrDefault(i => i.Id == item.Id);
+        existingItem.Name = item.Name;
+        existingItem.Description = item.Description;
+        return RedirectToAction("Index");
     }
 
-    public async Task<APIGatewayProxyResponse> DeleteItem(APIGatewayProxyRequest request, ILambdaContext context)
+    public ActionResult Delete(int id)
     {
-        string itemId = request.PathParameters["id"];
-
-        Table itemsTable = Table.LoadTable(_dynamoDbClient, TableName);
-        await itemsTable.DeleteItemAsync(itemId);
-
-        return new APIGatewayProxyResponse
-        {
-            StatusCode = 200,
-            Body = "Item deleted successfully",
-            Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
-        };
+        var item = items.FirstOrDefault(i => i.Id == id);
+        items.Remove(item);
+        return RedirectToAction("Index");
     }
 }
