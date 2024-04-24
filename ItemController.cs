@@ -38,7 +38,7 @@ public class ItemController : Controller
         existingItem.Description = item.Description;
         return RedirectToAction("Index");
     }
-     [HttpPost]
+[HttpPut]
     public ActionResult DeleteItemById(int id)
     {
         var item = items.FirstOrDefault(i => i.Id == id);
